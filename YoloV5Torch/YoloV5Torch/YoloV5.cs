@@ -23,9 +23,6 @@ namespace YoloV5Torch
 
     public class YoloV5 : IDisposable
     {
-        [DllImport("YoloV5TorchCpp.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void TestMain();
-
         [DllImport("YoloV5TorchCpp.dll", EntryPoint = "TorchCudaIsAvailable", CallingConvention = CallingConvention.Cdecl)]
         private static extern bool TorchCudaIsAvailable();
 
@@ -97,28 +94,28 @@ namespace YoloV5Torch
             }
         }
         public YoloV5(string torchscriptPath,
-            bool isCuda, bool isHalf, int height, int width, float confThres, float iouThres)
+            bool isCuda, bool isHalf = false, int height = 640, int width = 640, float confThres = 0.25f, float iouThres = 0.45f)
         {
             Initialize(isCuda, isHalf, height, width, confThres, iouThres);
             this.Ptr = YoloV5New(torchscriptPath, isCuda, isHalf, height, width, confThres, iouThres);
         }
 
         public YoloV5(byte[] torchScriptArr,
-            bool isCuda, bool isHalf, int height, int width, float confThres, float iouThres)
+            bool isCuda, bool isHalf = false, int height = 640, int width = 640, float confThres = 0.25f, float iouThres = 0.45f)
         {
             Initialize(isCuda, isHalf, height, width, confThres, iouThres);
             this.Ptr = YoloV5New(torchScriptArr, torchScriptArr.Length, isCuda, isHalf, height, width, confThres, iouThres);
         }
 
         public YoloV5(Stream stream,
-            bool isCuda, bool isHalf, int height, int width, float confThres, float iouThres)
+            bool isCuda, bool isHalf = false, int height = 640, int width = 640, float confThres = 0.25f, float iouThres = 0.45f)
         {
             Initialize(isCuda, isHalf, height, width, confThres, iouThres);
             byte[] bytes = ReadAllBytes(stream);
             this.Ptr = YoloV5New(bytes, bytes.Length, isCuda, isHalf, height, width, confThres, iouThres);
         }
 
-        public void Initialize(bool isCuda, bool isHalf, int height, int width, float confThres, float iouThres)
+        private void Initialize(bool isCuda, bool isHalf, int height, int width, float confThres, float iouThres)
         {
             this.IsCuda = isCuda;
             this.IsHalf = isHalf;
@@ -231,7 +228,7 @@ namespace YoloV5Torch
             private static extern IntPtr GetMatDataAndInfo(IntPtr matPtr, ref int w, ref int h, ref int channel, ref int type);
 
             [DllImport("YoloV5TorchCpp.dll", EntryPoint = "Cv2DeleteMat", CharSet = CharSet.Auto)]
-            public static extern IntPtr DeleteMat(IntPtr matPtr);
+            public static extern void DeleteMat(IntPtr matPtr);
 
 
             public static Bitmap GetBitmapFromMatPtr(IntPtr matPtr)

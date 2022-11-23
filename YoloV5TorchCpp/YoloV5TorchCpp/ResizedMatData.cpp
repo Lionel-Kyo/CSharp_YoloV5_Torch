@@ -7,6 +7,7 @@ ResizedMatData::ResizedMatData(const cv::Mat& resizedMat, int originalWidth, int
 	this->originalHeight = originalHeight;
 	this->width = resizedMat.cols;
 	this->height = resizedMat.rows;
+	this->border = border;
 }
 
 ResizedMatData ResizedMatData::resize(const cv::Mat& mat, int height, int width)
@@ -14,38 +15,28 @@ ResizedMatData ResizedMatData::resize(const cv::Mat& mat, int height, int width)
 	cv::Mat resized;
 	int originalWidth = mat.cols, originalHeight = mat.rows;
 
-	bool isW = (float)originalWidth / (float)originalHeight > (float)width / (float)height;
+	int w = originalWidth;
+	int h = originalHeight;
 
-	int sizeWidth = 0;
-	int sizeHeight = 0;
+	bool isW = (float)w / (float)h > (float)width / (float)height;
 
-	if (isW)
-	{
-		sizeWidth = width;
-		sizeHeight = (int)((float)width / (float)originalWidth * originalHeight);
-	}
-	else
-	{
-		sizeWidth = (int)((float)height / (float)originalHeight * originalWidth);
-		sizeHeight = height;
-	}
 
 	cv::resize(mat, resized, cv::Size(
-		isW ? width : (int)((float)height / (float)originalHeight * originalWidth),
-		isW ? (int)((float)width / (float)originalWidth * originalHeight) : height));
+		isW ? width : (int)((float)height / (float)h * w),
+		isW ? (int)((float)width / (float)w * h) : height));
 
-	originalWidth = resized.cols, originalHeight = resized.rows;
+	w = resized.cols, h = resized.rows;
 
 	int border = 0;
 	if (isW)
 	{
-		border = (height - originalHeight) / 2;
-		cv::copyMakeBorder(resized, resized, (height - originalHeight) / 2, height - originalHeight - (height - originalHeight) / 2, 0, 0, cv::BORDER_CONSTANT);
+		border = (height - h) / 2;
+		cv::copyMakeBorder(resized, resized, (height - h) / 2, height - h - (height - h) / 2, 0, 0, cv::BORDER_CONSTANT);
 	}
 	else
 	{
-		border = (width - originalWidth) / 2;
-		cv::copyMakeBorder(resized, resized, 0, 0, (width - originalWidth) / 2, width - originalWidth - (width - originalWidth) / 2, cv::BORDER_CONSTANT);
+		border = (width - w) / 2;
+		cv::copyMakeBorder(resized, resized, 0, 0, (width - w) / 2, width - w - (width - w) / 2, cv::BORDER_CONSTANT);
 	}
 	return ResizedMatData(resized, originalWidth, originalHeight, border);
 }
