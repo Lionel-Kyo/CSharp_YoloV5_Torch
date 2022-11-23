@@ -1,6 +1,6 @@
 # C# YoloV5 Torch
-Run [Ultralytics Yolo v5](https://github.com/ultralytics/yolov5) in C# by using [LibTorch](https://pytorch.org/cppdocs/)  
-The C++ part of this project is highly reference to [ncdhz's C++ Yolo V5 Library] (https://github.com/ncdhz/YoloV5-LibTorch)  
+Run [Ultralytics's YoloV5](https://github.com/ultralytics/yolov5) in C# by using [LibTorch](https://pytorch.org/cppdocs/)  
+The C++ part of this project is highly reference to [ncdhz's C++ YoloV5 Library](https://github.com/ncdhz/YoloV5-LibTorch)  
 
 ![alt](./images/01.jpg)  
 
