@@ -40,13 +40,13 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -116,10 +116,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.3\include;D:\CppLib\opencv\build\include\;D:\CppLib\libtorch-win-shared-with-deps-debug-1.10.2+cu113\libtorch\include;D:\CppLib\libtorch-win-shared-with-deps-debug-1.10.2+cu113\libtorch\include\torch\csrc\api\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>D:\CppLib\opencv\build\x64\vc15\lib;D:\CppLib\libtorch-win-shared-with-deps-debug-1.10.2+cu113\libtorch\lib;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.3\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_world460d.lib;asmjit.lib;c10.lib;c10_cuda.lib;caffe2_nvrtc.lib;clog.lib;cpuinfo.lib;dnnl.lib;fbgemm.lib;kineto.lib;libprotobuf-lited.lib;libprotobufd.lib;libprotocd.lib;pthreadpool.lib;torch.lib;torch_cpu.lib;torch_cuda.lib;torch_cuda_cpp.lib;torch_cuda_cu.lib;XNNPACK.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -130,12 +133,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.3\include;D:\CppLib\libtorch-win-shared-with-deps-1.10.2+cu113\libtorch\include;D:\CppLib\libtorch-win-shared-with-deps-1.10.2+cu113\libtorch\include\torch\csrc\api\include;D:\CppLib\opencv\build\include\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>D:\CppLib\opencv\build\x64\vc15\lib;D:\CppLib\libtorch-win-shared-with-deps-1.10.2+cu113\libtorch\lib;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.3\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_world460.lib;asmjit.lib;c10.lib;c10_cuda.lib;caffe2_detectron_ops_gpu.lib;caffe2_module_test_dynamic.lib;caffe2_nvrtc.lib;Caffe2_perfkernels_avx.lib;Caffe2_perfkernels_avx2.lib;Caffe2_perfkernels_avx512.lib;clog.lib;cpuinfo.lib;dnnl.lib;fbgemm.lib;fbjni.lib;kineto.lib;libprotobuf-lite.lib;libprotobuf.lib;libprotoc.lib;mkldnn.lib;pthreadpool.lib;pytorch_jni.lib;torch.lib;torch_cpu.lib;torch_cuda.lib;torch_cuda_cpp.lib;torch_cuda_cu.lib;XNNPACK.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
