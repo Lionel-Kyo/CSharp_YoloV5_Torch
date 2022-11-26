@@ -21,7 +21,7 @@
     <ClCompile Include="YoloV5.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ExternCharp.cpp">
+    <ClCompile Include="ExternCSharp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

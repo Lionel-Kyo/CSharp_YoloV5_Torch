@@ -145,7 +145,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ExternCharp.cpp" />
+    <ClCompile Include="ExternCSharp.cpp" />
     <ClCompile Include="ResizedMatData.cpp" />
     <ClCompile Include="YoloV5.cpp" />
   </ItemGroup>
