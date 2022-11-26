@@ -221,7 +221,7 @@ extern "C"
 		return matPtr->data;
 	}
 
-	__declspec(dllexport) void Cv2GetMat(unsigned char* src, int w, int h, int channel, cv::Mat** mat)
+	__declspec(dllexport) cv::Mat* Cv2MatFromBytes(unsigned char* src, int w, int h, int channel)
 	{
 		int format;
 		switch (channel)
@@ -239,9 +239,7 @@ extern "C"
 			format = CV_8UC4;
 			break;
 		}
-		if (*mat != nullptr)
-			delete* mat;
-		*mat = new cv::Mat(h, w, format, src);
+		return new cv::Mat(h, w, format, src);
 	}
 
 	__declspec(dllexport) int Cv2ShowMat(const char* winName, cv::Mat* mat, int delay)

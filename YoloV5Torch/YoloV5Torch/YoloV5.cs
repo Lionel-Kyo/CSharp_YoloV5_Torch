@@ -255,7 +255,7 @@ namespace YoloV5Torch
         /// <returns>Prediction result of the bitmap</returns>
         public YoloResult[] Predict(Bitmap bitmap)
         {
-            OpenCv.BitmapToMatPtr(bitmap, out IntPtr matPtr);
+            IntPtr matPtr = OpenCv.BitmapToMatPtr(bitmap);
             IntPtr cppResults = YoloV5Preditct(Ptr, matPtr);
             OpenCv.DeleteMat(matPtr);
 
@@ -282,9 +282,7 @@ namespace YoloV5Torch
 
             for (int i = 0; i < bmpNums; i++)
             {
-                IntPtr matPtr = IntPtr.Zero;
-                OpenCv.BitmapToMatPtr(bitmaps.ElementAt(i), out matPtr);
-                mats[i] = matPtr;
+                mats[i] = OpenCv.BitmapToMatPtr(bitmaps.ElementAt(i));
             }
 
             IntPtr cppResult = YoloV5Preditcts(Ptr, mats, mats.Length);
@@ -347,8 +345,8 @@ namespace YoloV5Torch
 
         private static class OpenCv
         {
-            [DllImport("YoloV5TorchCpp.dll", EntryPoint = "Cv2GetMat", CharSet = CharSet.Auto)]
-            private static extern void GetMat(byte[] src, int w, int h, int channel, out IntPtr intPtr);
+            [DllImport("YoloV5TorchCpp.dll", EntryPoint = "Cv2MatFromBytes", CharSet = CharSet.Auto)]
+            private static extern IntPtr MatFromBytes(byte[] src, int w, int h, int channel);
 
             [DllImport("YoloV5TorchCpp.dll", EntryPoint = "Cv2GetMatData", CharSet = CharSet.Auto)]
             private static extern IntPtr GetMatData(IntPtr matPtr, out int w, out int h, out int channel, out int type);
@@ -364,7 +362,7 @@ namespace YoloV5Torch
             /// </summary>
             /// <param name="matPtr">opencv mat pointer</param>
             /// <returns></returns>
-            public static Bitmap GetBitmapFromMatPtr(IntPtr matPtr)
+            public static Bitmap BitmapFromMatPtr(IntPtr matPtr)
             {
                 int w, h, channel, type;
                 IntPtr ptr = GetMatData(matPtr, out w, out h, out channel, out type);
@@ -429,13 +427,12 @@ namespace YoloV5Torch
             /// Convert bitmap to opencv mat pointer
             /// </summary>
             /// <param name="bitmap">bitmap</param>
-            /// <param name="matPtr">opencv mat pointer result</param>
-            public static void BitmapToMatPtr(Bitmap bitmap, out IntPtr matPtr)
+            public static IntPtr BitmapToMatPtr(Bitmap bitmap)
             {
                 int stride;
                 int channel = Image.GetPixelFormatSize(bitmap.PixelFormat) / 8;
                 byte[] source = GetBitmapBytes(bitmap, out stride);
-                GetMat(source, bitmap.Width, bitmap.Height, channel, out matPtr);
+                return MatFromBytes(source, bitmap.Width, bitmap.Height, channel);
             }
 
             /// <summary>
