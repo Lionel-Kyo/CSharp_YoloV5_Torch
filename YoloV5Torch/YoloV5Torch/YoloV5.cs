@@ -10,17 +10,41 @@ using System.Drawing.Imaging;
 
 namespace YoloV5Torch
 {
+    /// <summary>
+    /// Detection result of a item
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct YoloResult
     {
+        /// <summary>
+        /// Class index of the detection
+        /// </summary>
         public int ClassIndex;
+        /// <summary>
+        /// confidence score of the detection
+        /// </summary>
         public float Confidence;
+        /// <summary>
+        /// X coordinate of detection binding box (Left)
+        /// </summary>
         public int X;
+        /// <summary>
+        /// Y coordinate of detection binding box (Top)
+        /// </summary>
         public int Y;
+        /// <summary>
+        /// Width of detection binding box
+        /// </summary>
         public int Width;
+        /// <summary>
+        /// Height of detection binding box
+        /// </summary>
         public int Height;
     }
 
+    /// <summary>
+    /// Yolo V5 detection Class
+    /// </summary>
     public class YoloV5 : IDisposable
     {
         [DllImport("YoloV5TorchCpp.dll", EntryPoint = "TorchCudaIsAvailable", CallingConvention = CallingConvention.Cdecl)]
@@ -73,12 +97,33 @@ namespace YoloV5Torch
         [DllImport("YoloV5TorchCpp.dll", EntryPoint = "YoloV5ResultsDelete", CallingConvention = CallingConvention.Cdecl)]
         private static extern void YoloV5ResultsDelete(IntPtr results);
 
+        /// <summary>
+        /// pointer of C++ object
+        /// </summary>
         public IntPtr Ptr { get; private set; }
+        /// <summary>
+        /// is using cuda
+        /// </summary>
         public bool IsCuda { get; private set; }
+        /// <summary>
+        /// is half precision
+        /// </summary>
         public bool IsHalf { get; private set; }
+        /// <summary>
+        /// height of the model
+        /// </summary>
         public int Height { get; private set; }
+        /// <summary>
+        /// width of the model
+        /// </summary>
         public int Width { get; private set; }
+        /// <summary>
+        /// confidence threshold
+        /// </summary>
         public float ConfThres { get; private set; }
+        /// <summary>
+        /// iou threshold
+        /// </summary>
         public float IouThres { get; private set; }
 
         /// <summary>
@@ -158,6 +203,15 @@ namespace YoloV5Torch
             this.Ptr = YoloV5New(bytes, bytes.Length, isCuda, isHalf, height, width, confThres, iouThres);
         }
 
+        /// <summary>
+        /// Initialize variables
+        /// </summary>
+        /// <param name="isCuda">is using cuda</param>
+        /// <param name="isHalf">is half precision</param>
+        /// <param name="height">height of model</param>
+        /// <param name="width">width of model</param>
+        /// <param name="confThres">confidence threshold</param>
+        /// <param name="iouThres">iou threshold</param>
         private void Initialize(bool isCuda, bool isHalf, int height, int width, float confThres, float iouThres)
         {
             this.IsCuda = isCuda;
@@ -182,6 +236,11 @@ namespace YoloV5Torch
             }
         }
 
+        /// <summary>
+        /// Read all bytes from stream
+        /// </summary>
+        /// <param name="stream">stream</param>
+        /// <returns></returns>
         private byte[] ReadAllBytes(Stream stream)
         {
             byte[] buffer = new byte[stream.Length];
@@ -252,6 +311,10 @@ namespace YoloV5Torch
             return results;
         }
 
+        /// <summary>
+        /// Call it when finish using the object
+        /// </summary>
+        /// <param name="bDisposing"></param>
         protected virtual void Dispose(bool bDisposing)
         {
             if (this.Ptr != IntPtr.Zero)
@@ -266,11 +329,17 @@ namespace YoloV5Torch
             }
         }
 
+        /// <summary>
+        /// Call it when finish using the object
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
         }
 
+        /// <summary>
+        /// Destructor of the class, call it when the object is not disposed
+        /// </summary>
         ~YoloV5()
         {
             Dispose(false);
@@ -290,7 +359,11 @@ namespace YoloV5Torch
             [DllImport("YoloV5TorchCpp.dll", EntryPoint = "Cv2ShowMat", CharSet = CharSet.Auto)]
             public static extern void ShowMat([MarshalAs(UnmanagedType.LPStr)] string winName, IntPtr matPtr, int delay);
 
-
+            /// <summary>
+            /// Convert opencv mat pointer to Bitmap
+            /// </summary>
+            /// <param name="matPtr">opencv mat pointer</param>
+            /// <returns></returns>
             public static Bitmap GetBitmapFromMatPtr(IntPtr matPtr)
             {
                 int w, h, channel, type;
@@ -321,6 +394,15 @@ namespace YoloV5Torch
                 return BitmapFromBytes(ptr, w, h, stride, format);
             }
 
+            /// <summary>
+            /// Get bitmap from bytes data
+            /// </summary>
+            /// <param name="ptr">bytes pointer</param>
+            /// <param name="w">width</param>
+            /// <param name="h">height</param>
+            /// <param name="stride">stride (width * channel, multiple of 4)</param>
+            /// <param name="format">pixel format</param>
+            /// <returns></returns>
             private static Bitmap BitmapFromBytes(IntPtr ptr, int w, int h, int stride, PixelFormat format)
             {
                 int rowSize = w * Image.GetPixelFormatSize(format) / 8;
@@ -343,6 +425,11 @@ namespace YoloV5Torch
                 return bitmap;
             }
 
+            /// <summary>
+            /// Convert bitmap to opencv mat pointer
+            /// </summary>
+            /// <param name="bitmap">bitmap</param>
+            /// <param name="matPtr">opencv mat pointer result</param>
             public static void BitmapToMatPtr(Bitmap bitmap, out IntPtr matPtr)
             {
                 int stride;
@@ -351,6 +438,12 @@ namespace YoloV5Torch
                 GetMat(source, bitmap.Width, bitmap.Height, channel, out matPtr);
             }
 
+            /// <summary>
+            /// Get bytes data from bitmap
+            /// </summary>
+            /// <param name="bmp">bitmap</param>
+            /// <param name="stride">stride (width * channel, multiple of 4)</param>
+            /// <returns></returns>
             private static byte[] GetBitmapBytes(Bitmap bmp, out int stride)
             {
                 int width = bmp.Width;

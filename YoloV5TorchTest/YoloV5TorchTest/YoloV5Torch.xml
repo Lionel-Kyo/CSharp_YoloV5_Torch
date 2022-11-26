@@ -1,0 +1,241 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>YoloV5Torch</name>
+    </assembly>
+    <members>
+        <member name="T:YoloV5Torch.YoloResult">
+            <summary>
+            Detection result of a item
+            </summary>
+        </member>
+        <member name="F:YoloV5Torch.YoloResult.ClassIndex">
+            <summary>
+            Class index of the detection
+            </summary>
+        </member>
+        <member name="F:YoloV5Torch.YoloResult.Confidence">
+            <summary>
+            confidence score of the detection
+            </summary>
+        </member>
+        <member name="F:YoloV5Torch.YoloResult.X">
+            <summary>
+            X coordinate of detection binding box (Left)
+            </summary>
+        </member>
+        <member name="F:YoloV5Torch.YoloResult.Y">
+            <summary>
+            Y coordinate of detection binding box (Top)
+            </summary>
+        </member>
+        <member name="F:YoloV5Torch.YoloResult.Width">
+            <summary>
+            Width of detection binding box
+            </summary>
+        </member>
+        <member name="F:YoloV5Torch.YoloResult.Height">
+            <summary>
+            Height of detection binding box
+            </summary>
+        </member>
+        <member name="T:YoloV5Torch.YoloV5">
+            <summary>
+            Yolo V5 detection Class
+            </summary>
+        </member>
+        <member name="P:YoloV5Torch.YoloV5.Ptr">
+            <summary>
+            pointer of C++ object
+            </summary>
+        </member>
+        <member name="P:YoloV5Torch.YoloV5.IsCuda">
+            <summary>
+            is using cuda
+            </summary>
+        </member>
+        <member name="P:YoloV5Torch.YoloV5.IsHalf">
+            <summary>
+            is half precision
+            </summary>
+        </member>
+        <member name="P:YoloV5Torch.YoloV5.Height">
+            <summary>
+            height of the model
+            </summary>
+        </member>
+        <member name="P:YoloV5Torch.YoloV5.Width">
+            <summary>
+            width of the model
+            </summary>
+        </member>
+        <member name="P:YoloV5Torch.YoloV5.ConfThres">
+            <summary>
+            confidence threshold
+            </summary>
+        </member>
+        <member name="P:YoloV5Torch.YoloV5.IouThres">
+            <summary>
+            iou threshold
+            </summary>
+        </member>
+        <member name="P:YoloV5Torch.YoloV5.IsCudaAvailable">
+            <summary>
+            is cuda available
+            </summary>
+        </member>
+        <member name="P:YoloV5Torch.YoloV5.IsCudnnAvailable">
+            <summary>
+            is cudnn available
+            </summary>
+        </member>
+        <member name="P:YoloV5Torch.YoloV5.CudaDeviceCount">
+            <summary>
+            Number of cuda devices
+            </summary>
+        </member>
+        <member name="P:YoloV5Torch.YoloV5.TorchVersion">
+            <summary>
+            torch version
+            </summary>
+        </member>
+        <member name="M:YoloV5Torch.YoloV5.#ctor(System.String,System.Boolean,System.Boolean,System.Int32,System.Int32,System.Single,System.Single)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="torchscriptPath">path of torchscript</param>
+            <param name="isCuda">is using cuda</param>
+            <param name="isHalf">is half precision</param>
+            <param name="height">height of model</param>
+            <param name="width">width of model</param>
+            <param name="confThres">confidence threshold</param>
+            <param name="iouThres">iou threshold</param>
+        </member>
+        <member name="M:YoloV5Torch.YoloV5.#ctor(System.Byte[],System.Boolean,System.Boolean,System.Int32,System.Int32,System.Single,System.Single)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="torchScriptArr">bytes of torchscript</param>
+            <param name="isCuda">is using cuda</param>
+            <param name="isHalf">is half precision</param>
+            <param name="height">height of model</param>
+            <param name="width">width of model</param>
+            <param name="confThres">confidence threshold</param>
+            <param name="iouThres">iou threshold</param>
+        </member>
+        <member name="M:YoloV5Torch.YoloV5.#ctor(System.IO.Stream,System.Boolean,System.Boolean,System.Int32,System.Int32,System.Single,System.Single)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="stream">stream of torchscript</param>
+            <param name="isCuda">is using cuda</param>
+            <param name="isHalf">is half precision</param>
+            <param name="height">height of model</param>
+            <param name="width">width of model</param>
+            <param name="confThres">confidence threshold</param>
+            <param name="iouThres">iou threshold</param>
+        </member>
+        <member name="M:YoloV5Torch.YoloV5.Initialize(System.Boolean,System.Boolean,System.Int32,System.Int32,System.Single,System.Single)">
+            <summary>
+            Initialize variables
+            </summary>
+            <param name="isCuda">is using cuda</param>
+            <param name="isHalf">is half precision</param>
+            <param name="height">height of model</param>
+            <param name="width">width of model</param>
+            <param name="confThres">confidence threshold</param>
+            <param name="iouThres">iou threshold</param>
+        </member>
+        <member name="M:YoloV5Torch.YoloV5.WarmUp">
+            <summary>
+            Warm up torch
+            </summary>
+        </member>
+        <member name="M:YoloV5Torch.YoloV5.ReadAllBytes(System.IO.Stream)">
+            <summary>
+            Read all bytes from stream
+            </summary>
+            <param name="stream">stream</param>
+            <returns></returns>
+        </member>
+        <member name="M:YoloV5Torch.YoloV5.Predict(System.Drawing.Bitmap)">
+            <summary>
+            Predict by bitmap
+            </summary>
+            <param name="bitmap">bitmap</param>
+            <returns>Prediction result of the bitmap</returns>
+        </member>
+        <member name="M:YoloV5Torch.YoloV5.Predicts(System.Collections.Generic.IEnumerable{System.Drawing.Bitmap})">
+            <summary>
+            Predict by bitmaps 
+            </summary>
+            <param name="bitmaps">bitmap collection</param>
+            <returns>Prediction result of bitmap collection</returns>
+        </member>
+        <member name="M:YoloV5Torch.YoloV5.Dispose(System.Boolean)">
+            <summary>
+            Call it when finish using the object
+            </summary>
+            <param name="bDisposing"></param>
+        </member>
+        <member name="M:YoloV5Torch.YoloV5.Dispose">
+            <summary>
+            Call it when finish using the object
+            </summary>
+        </member>
+        <member name="M:YoloV5Torch.YoloV5.Finalize">
+            <summary>
+            Destructor of the class, call it when the object is not disposed
+            </summary>
+        </member>
+        <member name="M:YoloV5Torch.YoloV5.OpenCv.GetBitmapFromMatPtr(System.IntPtr)">
+            <summary>
+            Convert opencv mat pointer to Bitmap
+            </summary>
+            <param name="matPtr">opencv mat pointer</param>
+            <returns></returns>
+        </member>
+        <member name="M:YoloV5Torch.YoloV5.OpenCv.BitmapFromBytes(System.IntPtr,System.Int32,System.Int32,System.Int32,System.Drawing.Imaging.PixelFormat)">
+            <summary>
+            Get bitmap from bytes data
+            </summary>
+            <param name="ptr">bytes pointer</param>
+            <param name="w">width</param>
+            <param name="h">height</param>
+            <param name="stride">stride (width * channel, multiple of 4)</param>
+            <param name="format">pixel format</param>
+            <returns></returns>
+        </member>
+        <member name="M:YoloV5Torch.YoloV5.OpenCv.BitmapToMatPtr(System.Drawing.Bitmap,System.IntPtr@)">
+            <summary>
+            Convert bitmap to opencv mat pointer
+            </summary>
+            <param name="bitmap">bitmap</param>
+            <param name="matPtr">opencv mat pointer result</param>
+        </member>
+        <member name="M:YoloV5Torch.YoloV5.OpenCv.GetBitmapBytes(System.Drawing.Bitmap,System.Int32@)">
+            <summary>
+            Get bytes data from bitmap
+            </summary>
+            <param name="bmp">bitmap</param>
+            <param name="stride">stride (width * channel, multiple of 4)</param>
+            <returns></returns>
+        </member>
+        <member name="T:YoloV5Torch.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:YoloV5Torch.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:YoloV5Torch.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+    </members>
+</doc>
