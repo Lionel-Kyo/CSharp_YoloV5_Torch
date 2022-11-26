@@ -13,7 +13,7 @@ can reference to:  YoloV5TorchTest/YoloV5TorchTest
 Download libtorch-win-shared-with-deps-1.10.2+cu113  
 Download opencv 4.6.0  
 Download and install cuda 11.3  
-Download and install cudnn 8.5.0.96
+Download and install cudnn 8.5.0.96  
 Get YoloV5Torch.dll from YoloV5TorchTest/YoloV5TorchTest/  
 Get YoloV5TorchCpp.dll from YoloV5TorchTest/YoloV5TorchTest/  
 Create a C# program and add YoloV5Torch.dll to the reference  
