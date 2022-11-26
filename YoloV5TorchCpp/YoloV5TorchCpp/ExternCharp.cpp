@@ -38,7 +38,7 @@ extern "C"
 	 * @return result
 	 */
 
-	__declspec(dllexport) bool TorchCudaDeviceCount()
+	__declspec(dllexport) int TorchCudaDeviceCount()
 	{
 		return torch::cuda::device_count();
 	}
@@ -129,17 +129,17 @@ extern "C"
 		if (yolov5 == nullptr || matArr == nullptr || matArrLength <= 0)
 			return nullptr;
 
-		std::vector<cv::Mat> mats;
-		for (int i = 0; i < matArrLength; i++)
-		{
-			cv::Mat* matPtr = matArr[i];
-			if (matPtr == nullptr)
-				return nullptr;
-			mats.emplace_back(*matPtr);
-		}
-
 		try
 		{
+			std::vector<cv::Mat> mats;
+			for (int i = 0; i < matArrLength; i++)
+			{
+				cv::Mat* matPtr = matArr[i];
+				if (matPtr == nullptr)
+					return nullptr;
+				mats.emplace_back(*matPtr);
+			}
+
 			auto prediction = yolov5->prediction(mats);
 			auto results = new std::vector<std::vector<YoloResult>*>();
 
@@ -197,28 +197,28 @@ extern "C"
 
 	// Cv2 operation
 
-	__declspec(dllexport) void* Cv2GetMatDataAndInfo(void* matPtr, int& w, int& h, int& channel, int& imgtype)
+	__declspec(dllexport) uint8_t* Cv2GetMatData(cv::Mat* matPtr, int* w, int* h, int* channel, int* imgtype)
 	{
-		cv::Mat* img = (cv::Mat*)matPtr;
-		w = img->cols;
-		h = img->rows;
-		channel = img->channels();
-		switch (img->type())
+		*w = matPtr->cols;
+		*h = matPtr->rows;
+		*channel = matPtr->channels();
+		*imgtype = 0;
+		switch (matPtr->type())
 		{
 		case CV_8UC1:
-			imgtype = 1;
+			*imgtype = 1;
 			break;
 		case CV_8UC3:
-			imgtype = 3;
+			*imgtype = 3;
 			break;
 		case CV_8UC2:
-			imgtype = 2;
+			*imgtype = 2;
 			break;
 		case CV_8UC4:
-			imgtype = 4;
+			*imgtype = 4;
 			break;
 		}
-		return img->data;
+		return matPtr->data;
 	}
 
 	__declspec(dllexport) void Cv2GetMat(unsigned char* src, int w, int h, int channel, cv::Mat** mat)
@@ -242,6 +242,12 @@ extern "C"
 		if (*mat != nullptr)
 			delete* mat;
 		*mat = new cv::Mat(h, w, format, src);
+	}
+
+	__declspec(dllexport) int Cv2ShowMat(const char* winName, cv::Mat* mat, int delay)
+	{
+		cv::imshow(winName, *mat);
+		return cv::waitKey(delay);
 	}
 
 	__declspec(dllexport) void Cv2DeleteMat(cv::Mat* matPtr)

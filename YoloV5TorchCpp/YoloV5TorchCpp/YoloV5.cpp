@@ -239,8 +239,10 @@ std::vector<torch::Tensor> YoloV5::prediction(const std::string& filePath)
 std::vector<torch::Tensor> YoloV5::prediction(const cv::Mat& img)
 {
 	ResizedMatData imgRD = resize(img);
+
 	cv::Mat reImg = img2RGB(imgRD.getMat());
 	torch::Tensor data = img2Tensor(reImg);
+
 	std::vector<torch::Tensor> result = prediction(data);
 	std::vector<ResizedMatData> imgRDs;
 	imgRDs.push_back(imgRD);

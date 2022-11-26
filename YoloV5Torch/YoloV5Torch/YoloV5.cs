@@ -30,7 +30,7 @@ namespace YoloV5Torch
         private static extern bool TorchCudaCudnnIsAvailable();
 
         [DllImport("YoloV5TorchCpp.dll", EntryPoint = "TorchCudaDeviceCount", CallingConvention = CallingConvention.Cdecl)]
-        private static extern bool TorchCudaDeviceCount();
+        private static extern int TorchCudaDeviceCount();
 
         [DllImport("YoloV5TorchCpp.dll", EntryPoint = "TorchVersion", CallingConvention = CallingConvention.Cdecl)]
         private static extern void GetTorchVersion(out IntPtr str, out int length);
@@ -81,8 +81,21 @@ namespace YoloV5Torch
         public float ConfThres { get; private set; }
         public float IouThres { get; private set; }
 
+        /// <summary>
+        /// is cuda available
+        /// </summary>
         public static bool IsCudaAvailable => TorchCudaIsAvailable();
+        /// <summary>
+        /// is cudnn available
+        /// </summary>
         public static bool IsCudnnAvailable => TorchCudaCudnnIsAvailable();
+        /// <summary>
+        /// Number of cuda devices
+        /// </summary>
+        public static int CudaDeviceCount => TorchCudaDeviceCount();
+        /// <summary>
+        /// torch version
+        /// </summary>
         public static string TorchVersion
         {
             get
@@ -93,6 +106,16 @@ namespace YoloV5Torch
                 return result;
             }
         }
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="torchscriptPath">path of torchscript</param>
+        /// <param name="isCuda">is using cuda</param>
+        /// <param name="isHalf">is half precision</param>
+        /// <param name="height">height of model</param>
+        /// <param name="width">width of model</param>
+        /// <param name="confThres">confidence threshold</param>
+        /// <param name="iouThres">iou threshold</param>
         public YoloV5(string torchscriptPath,
             bool isCuda, bool isHalf = false, int height = 640, int width = 640, float confThres = 0.25f, float iouThres = 0.45f)
         {
@@ -100,6 +123,16 @@ namespace YoloV5Torch
             this.Ptr = YoloV5New(torchscriptPath, isCuda, isHalf, height, width, confThres, iouThres);
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="torchScriptArr">bytes of torchscript</param>
+        /// <param name="isCuda">is using cuda</param>
+        /// <param name="isHalf">is half precision</param>
+        /// <param name="height">height of model</param>
+        /// <param name="width">width of model</param>
+        /// <param name="confThres">confidence threshold</param>
+        /// <param name="iouThres">iou threshold</param>
         public YoloV5(byte[] torchScriptArr,
             bool isCuda, bool isHalf = false, int height = 640, int width = 640, float confThres = 0.25f, float iouThres = 0.45f)
         {
@@ -107,6 +140,16 @@ namespace YoloV5Torch
             this.Ptr = YoloV5New(torchScriptArr, torchScriptArr.Length, isCuda, isHalf, height, width, confThres, iouThres);
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="stream">stream of torchscript</param>
+        /// <param name="isCuda">is using cuda</param>
+        /// <param name="isHalf">is half precision</param>
+        /// <param name="height">height of model</param>
+        /// <param name="width">width of model</param>
+        /// <param name="confThres">confidence threshold</param>
+        /// <param name="iouThres">iou threshold</param>
         public YoloV5(Stream stream,
             bool isCuda, bool isHalf = false, int height = 640, int width = 640, float confThres = 0.25f, float iouThres = 0.45f)
         {
@@ -125,12 +168,17 @@ namespace YoloV5Torch
             this.IouThres = iouThres;
         }
 
+        /// <summary>
+        /// Warm up torch
+        /// </summary>
         public void WarmUp()
         {
-            Bitmap bmp = new Bitmap(Height, Width);
-            for (int i = 0; i < 3; i++)
+            using (Bitmap bmp = new Bitmap(Height, Width))
             {
-                this.Predict(bmp);
+                for (int i = 0; i < 3; i++)
+                {
+                    Predict(bmp);
+                }
             }
         }
 
@@ -141,6 +189,11 @@ namespace YoloV5Torch
             return buffer;
         }
 
+        /// <summary>
+        /// Predict by bitmap
+        /// </summary>
+        /// <param name="bitmap">bitmap</param>
+        /// <returns>Prediction result of the bitmap</returns>
         public YoloResult[] Predict(Bitmap bitmap)
         {
             OpenCv.BitmapToMatPtr(bitmap, out IntPtr matPtr);
@@ -158,17 +211,21 @@ namespace YoloV5Torch
             return result;
         }
 
+        /// <summary>
+        /// Predict by bitmaps 
+        /// </summary>
+        /// <param name="bitmaps">bitmap collection</param>
+        /// <returns>Prediction result of bitmap collection</returns>
         public YoloResult[][] Predicts(IEnumerable<Bitmap> bitmaps)
         {
-            IntPtr[] mats = new IntPtr[bitmaps.Count()];
+            int bmpNums = bitmaps.Count();
+            IntPtr[] mats = new IntPtr[bmpNums];
 
-            int count = 0;
-            for (int i = 0; i < bitmaps.Count(); i++)
+            for (int i = 0; i < bmpNums; i++)
             {
                 IntPtr matPtr = IntPtr.Zero;
                 OpenCv.BitmapToMatPtr(bitmaps.ElementAt(i), out matPtr);
-                mats[count] = matPtr;
-                count++;
+                mats[i] = matPtr;
             }
 
             IntPtr cppResult = YoloV5Preditcts(Ptr, mats, mats.Length);
@@ -224,94 +281,101 @@ namespace YoloV5Torch
             [DllImport("YoloV5TorchCpp.dll", EntryPoint = "Cv2GetMat", CharSet = CharSet.Auto)]
             private static extern void GetMat(byte[] src, int w, int h, int channel, out IntPtr intPtr);
 
-            [DllImport("YoloV5TorchCpp.dll", EntryPoint = "Cv2GetMatDataAndInfo", CharSet = CharSet.Auto)]
-            private static extern IntPtr GetMatDataAndInfo(IntPtr matPtr, ref int w, ref int h, ref int channel, ref int type);
+            [DllImport("YoloV5TorchCpp.dll", EntryPoint = "Cv2GetMatData", CharSet = CharSet.Auto)]
+            private static extern IntPtr GetMatData(IntPtr matPtr, out int w, out int h, out int channel, out int type);
 
             [DllImport("YoloV5TorchCpp.dll", EntryPoint = "Cv2DeleteMat", CharSet = CharSet.Auto)]
             public static extern void DeleteMat(IntPtr matPtr);
 
+            [DllImport("YoloV5TorchCpp.dll", EntryPoint = "Cv2ShowMat", CharSet = CharSet.Auto)]
+            public static extern void ShowMat([MarshalAs(UnmanagedType.LPStr)] string winName, IntPtr matPtr, int delay);
+
 
             public static Bitmap GetBitmapFromMatPtr(IntPtr matPtr)
             {
-                int w = 0;
-                int h = 0;
-                int channel = 0;
-                int type = 0;
-                IntPtr ptr = GetMatDataAndInfo(matPtr, ref w, ref h, ref channel, ref type);
+                int w, h, channel, type;
+                IntPtr ptr = GetMatData(matPtr, out w, out h, out channel, out type);
+                // stride must multiple of 4 
                 int stride = channel * w;
+                stride = stride + (4 - stride % 4);
+
                 PixelFormat format;
                 switch (type)
                 {
                     case 1:
                         format = PixelFormat.Format8bppIndexed;
                         break;
+                    case 2:
+                        format = PixelFormat.Format16bppGrayScale;
+                        break;
                     case 3:
                         format = PixelFormat.Format24bppRgb;
+                        break;
+                    case 4:
+                        format = PixelFormat.Format32bppArgb;
                         break;
                     default:
                         return null;
                 }
 
-                return GetBitmapByData(ptr, w, h, stride, format);
+                return BitmapFromBytes(ptr, w, h, stride, format);
             }
 
-            public static Bitmap GetBitmapByData(IntPtr ptr, int w, int h, int stride, PixelFormat format)
+            private static Bitmap BitmapFromBytes(IntPtr ptr, int w, int h, int stride, PixelFormat format)
             {
+                int rowSize = w * Image.GetPixelFormatSize(format) / 8;
 
-                int rowBytes = w * Image.GetPixelFormatSize(format) / 8;
-                byte[] rgbValues = new byte[stride * h];
-                for (var i = 0; i < h; i++)
+                // bytes store in Bitmap is in BGRA / BGRA format
+                byte[] imgBytes = new byte[stride * h];
+                Parallel.For(0, h, i =>
                 {
+                    IntPtr tempPtr = ptr + i * rowSize;
+                    Marshal.Copy(tempPtr, imgBytes, i * stride, rowSize);
+                });
 
-                    Marshal.Copy(ptr, rgbValues, i * stride, rowBytes);
-                    ptr += rowBytes; // next row
-                }
-
-                GCHandle hObject = GCHandle.Alloc(rgbValues, GCHandleType.Pinned);
-                IntPtr ptrnew = hObject.AddrOfPinnedObject();
-
-                Bitmap bitmap = new Bitmap(w, h, stride, format, ptrnew);
+                Bitmap bitmap = new Bitmap(w, h, stride, format, Marshal.UnsafeAddrOfPinnedArrayElement(imgBytes, 0));
 
                 if (format == PixelFormat.Format8bppIndexed)
                 {
                     //bitmap.Palette = GrayPalette;
                 }
 
-                hObject.Free();
                 return bitmap;
             }
-
 
             public static void BitmapToMatPtr(Bitmap bitmap, out IntPtr matPtr)
             {
                 int stride;
                 int channel = Image.GetPixelFormatSize(bitmap.PixelFormat) / 8;
-                byte[] source = GetBGRValues(bitmap, out stride);
+                byte[] source = GetBitmapBytes(bitmap, out stride);
                 GetMat(source, bitmap.Width, bitmap.Height, channel, out matPtr);
             }
 
-            public static byte[] GetBGRValues(Bitmap bmp, out int stride)
+            private static byte[] GetBitmapBytes(Bitmap bmp, out int stride)
             {
-                var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
-                var bmpData = bmp.LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadOnly, bmp.PixelFormat);
-                stride = bmpData.Stride;
-
-                var rowBytes = bmpData.Width * Image.GetPixelFormatSize(bmp.PixelFormat) / 8;
-                var imgBytes = bmp.Height * rowBytes;
-                byte[] rgbValues = new byte[imgBytes];
-
+                int width = bmp.Width;
                 int height = bmp.Height;
-                int _stride = stride;
-                IntPtr ptr = bmpData.Scan0;
 
+                var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
+                var bmpBytes = bmp.LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadOnly, bmp.PixelFormat);
+                stride = bmpBytes.Stride;
+
+                var rowSize = width * Image.GetPixelFormatSize(bmp.PixelFormat) / 8;
+                var bmpSize = height * rowSize;
+                // bytes store in Bitmap is in BGRA / BGRA format
+                byte[] imgBytes = new byte[bmpSize];
+
+                IntPtr ptr = bmpBytes.Scan0;
+
+                int tempStride = stride;
                 Parallel.For(0, height, i =>
                 {
-                    IntPtr _ptr = new IntPtr(ptr.ToInt64() + i * _stride);
-                    Marshal.Copy(_ptr, rgbValues, i * rowBytes, rowBytes);
+                    IntPtr tempPtr = ptr + i * tempStride;
+                    Marshal.Copy(tempPtr, imgBytes, i * rowSize, rowSize);
                 });
-                bmp.UnlockBits(bmpData);
+                bmp.UnlockBits(bmpBytes);
 
-                return rgbValues;
+                return imgBytes;
             }
 
         }

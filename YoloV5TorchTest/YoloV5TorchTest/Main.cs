@@ -22,14 +22,16 @@ namespace YoloV5TorchTest
         public Main()
         {
             InitializeComponent();
+            
             using (FileStream modelStream = new FileStream("./weights/yolov5s.cuda.pt", FileMode.Open))
             {
                 yolov5 = new YoloV5(modelStream, YoloV5.IsCudaAvailable, false, 640, 640, 0.25f, 0.45f);
             }
             yolov5.WarmUp();
             defaultBmps = new Bitmap[2];
-            defaultBmps[0] = (Bitmap)Bitmap.FromFile("./images/bus.jpg");
-            defaultBmps[1] = (Bitmap)Bitmap.FromFile("./images/zidane.jpg");
+            defaultBmps[0] = new Bitmap("./images/bus.jpg");
+            defaultBmps[1] = new Bitmap("./images/zidane.jpg");
+
             labels = DefaultLabels;
         }
 
