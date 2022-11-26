@@ -407,7 +407,7 @@ namespace YoloV5Torch
             {
                 int rowSize = w * Image.GetPixelFormatSize(format) / 8;
 
-                // bytes store in Bitmap is in BGRA / BGRA format
+                // bytes store in Bitmap is in BGR / BGRA format
                 byte[] imgBytes = new byte[stride * h];
                 Parallel.For(0, h, i =>
                 {
@@ -455,7 +455,7 @@ namespace YoloV5Torch
 
                 var rowSize = width * Image.GetPixelFormatSize(bmp.PixelFormat) / 8;
                 var bmpSize = height * rowSize;
-                // bytes store in Bitmap is in BGRA / BGRA format
+                // bytes store in Bitmap is in BGR / BGRA format
                 byte[] imgBytes = new byte[bmpSize];
 
                 IntPtr ptr = bmpBytes.Scan0;

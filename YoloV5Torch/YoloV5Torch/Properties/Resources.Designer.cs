@@ -61,3 +61,4 @@ namespace YoloV5Torch.Properties {
         }
     }
 }
+
